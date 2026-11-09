@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Wheels POS - Panel Administrador</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Incluir Chart.js para las gráficas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #0b0c10;
+            background-image: radial-gradient(circle at center, #1b1e28 0%, #08090c 100%);
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 0;
+        }
+        .main-container {
+            width: 90%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .dashboard-card {
+            background: #12151e;
+            border-radius: 16px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .title-group h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+        .title-group p {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            color: #ff3b00;
+            letter-spacing: 2px;
+            margin-top: 0.3rem;
+            text-transform: uppercase;
+        }
+        .btn-logout {
+            background: #8b0000;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .btn-logout:hover { background: #b30000; }
+        .btn-add {
+            background: #008060;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-add:hover { background: #00a876; }
+        .table-wrapper { width: 100%; overflow-x: auto; }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .admin-table th {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #ffb400;
+            letter-spacing: 1px;
+            padding: 1rem 0.5rem;
+            border-bottom: 2px solid #ff3b00;
+            text-transform: uppercase;
+        }
+        .admin-table td {
+            padding: 1rem 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+            color: #d1d5db;
+            vertical-align: middle;
+        }
+        .admin-table tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
+        .img-thumb {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn-update {
+            background: #7a5c00;
+            color: #ffd700;
+            border: 1px solid #ffb400;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-update:hover { background: #ffb400; color: #000; }
+        .btn-delete {
+            background: #4a0d0d;
+            color: #ff6b6b;
+            border: 1px solid #ff3333;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+        .btn-delete:hover { background: #ff3333; color: #fff; }
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .modal-box {
+            background: #12151e;
+            border: 1px solid #ff3b00;
+            border-radius: 12px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 420px;
+        }
+        .modal-box h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #ffb400;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        .modal-box label {
+            display: block;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            color: #ff3b00;
+            margin-top: 1rem;
+            margin-bottom: 0.3rem;
+        }
+        .modal-box input {
+            width: 100%;
+            padding: 0.6rem;
+            background: #0b0c10;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            border-radius: 4px;
+        }
+        .modal-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- 1. GESTIÓN DE CLIENTES -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <div class="title-group">
+                    <h1>GESTIÓN DE CLIENTES</h1>
+                    <p>CONTROL Y MANTENIMIENTO DE USUARIOS</p>
+                </div>
+                <a href="logout.html" class="btn-logout">CERRAR SESIÓN</a>
+            </div>
+            <div class="table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>NUM</th>
+                            <th>CORREO</th>
+                            <th>CONTRASEÑA (HASH)</th>
+                            <th>HORA</th>
+                            <th>FECHA</th>
+                            <th>UPDATE</th>
+                            <th>ELIMINAR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                <tr>
+                                    <td><strong></strong></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <button class="btn-update" onclick="abrirModalCliente(, '')">UPDATE</button>
+                                    </td>
+                                    <td>
+                                        <a href="admin_dashboard.html?action=eliminar_cliente&id=" class="btn-delete" onclick="return confirm('¿Eliminar cliente?')">ELIMINAR</a>
+                                    </td>
+                                </tr>
+                            <tr><td colspan="7" style="text-align:center; color:#888;">No hay clientes registrados.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 2. USUARIOS ADMINISTRADORES -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <div class="title-group">
+                    <h1>USUARIOS ADMINISTRADORES</h1>
+                    <p>CONTROL DE ACCESO AL PANEL POS</p>
+                </div>
+                <button class="btn-add" onclick="abrirModalCrearUsuario()">+ NUEVO ADMIN</button>
+            </div>
+            <div class="table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID USUARIO</th>
+                            <th>CONTRASEÑA</th>
+                            <th>UPDATE</th>
+                            <th>ELIMINAR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                <tr>
+                                    <td><strong></strong></td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <button class="btn-update" onclick="abrirModalUsuario('', '')">UPDATE</button>
+                                    </td>
+                                    <td>
+                                        <a href="admin_dashboard.html?action=eliminar_usuario&id=" class="btn-delete" onclick="return confirm('¿Eliminar este administrador?')">ELIMINAR</a>
+                                    </td>
+                                </tr>
+                            <tr><td colspan="4" style="text-align:center; color:#888;">No hay usuarios administradores registrados.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 3. PRODUCTOS VENDIDOS -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <div class="title-group">
+                    <h1>PRODUCTOS VENDIDOS</h1>
+                    <p>REGISTRO DE VENTAS Y RESERVAS</p>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>NOMBRE PRODUCTO</th>
+                            <th>NOMBRE CLIENTE</th>
+                            <th>CANTIDAD</th>
+                            <th>FECHA</th>
+                            <th>HORA</th>
+                            <th>UPDATE</th>
+                            <th>ELIMINAR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                <tr>
+                                    <td><strong></strong></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span style="color:#00ffcc; font-weight:bold;"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <button class="btn-update" onclick="abrirModalVenta(, '', '', )">UPDATE</button>
+                                    </td>
+                                    <td>
+                                        <a href="admin_dashboard.html?action=eliminar_venta&id=" class="btn-delete" onclick="return confirm('¿Eliminar esta venta?')">ELIMINAR</a>
+                                    </td>
+                                </tr>
+                            <tr><td colspan="8" style="text-align:center; color:#888;">No hay ventas registradas.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 3.1. GRÁFICA DE VENTAS POR MES -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <div class="title-group">
+                    <h1>ESTADÍSTICAS DE VENTAS</h1>
+                    <p>REPORTE MENSUAL DE UNIDADES VENDIDAS</p>
+                </div>
+            </div>
+            <div style="position: relative; height: 320px; width: 100%;">
+                <canvas id="graficaVentasMes"></canvas>
+            </div>
+        </div>
+        <!-- 4. INVENTARIO DE PRODUCTOS (CON BOTÓN NUEVO PRODUCTO) -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <div class="title-group">
+                    <h1>INVENTARIO DE PRODUCTOS</h1>
+                    <p>CONTROL DE STOCK Y EXISTENCIAS</p>
+                </div>
+                <button class="btn-add" onclick="abrirModalCrearInventario()">+ NUEVO PRODUCTO</button>
+            </div>
+            <div class="table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>FOTO</th>
+                            <th>NOMBRE</th>
+                            <th>STOCK</th>
+                            <th>FECHA</th>
+                            <th>HORA</th>
+                            <th>UPDATE</th>
+                            <th>ELIMINAR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                <tr>
+                                    <td>
+                                            <img src="img/" class="img-thumb" alt="Foto">
+                                            <span style="color:#666;">Sin Foto</span>
+                                    </td>
+                                    <td><strong></strong></td>
+                                    <td><span style="color:#00ffcc; font-weight:bold;"></span></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <button class="btn-update" onclick="abrirModalInventario(, '', )">UPDATE</button>
+                                    </td>
+                                    <td>
+                                        <a href="admin_dashboard.html?action=eliminar_inventario&id=" class="btn-delete" onclick="return confirm('¿Eliminar producto del inventario?')">ELIMINAR</a>
+                                    </td>
+                                </tr>
+                            <tr><td colspan="7" style="text-align:center; color:#888;">No hay productos en el inventario.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 5. BITÁCORA DE ACCESOS -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <div class="title-group">
+                    <h1>BITÁCORA DE ACCESOS</h1>
+                    <p>REGISTRO DE INICIOS DE SESIÓN Y TENTATIVAS</p>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>NOMBRE / USUARIO</th>
+                            <th>ROL</th>
+                            <th>FECHA</th>
+                            <th>HORA</th>
+                            <th>ESTATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                <tr>
+                                    <td><strong></strong></td>
+                                    <td></td>
+                                    <td>
+                                        <span style="padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; background: ; color: ;">
+                                        </span>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                            <span style="padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; background: rgba(0, 255, 128, 0.2); color: #00ff80; border: 1px solid #00ff80;">
+                                                ÉXITO
+                                            </span>
+                                            <span style="padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; background: rgba(255, 51, 51, 0.2); color: #ff3333; border: 1px solid #ff3333;">
+                                                ERROR
+                                            </span>
+                                    </td>
+                                </tr>
+                            <tr><td colspan="6" style="text-align:center; color:#888;">No hay registros en la bitácora.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- MODAL NUEVO PRODUCTO EN INVENTARIO -->
+    <div id="modalCrearInventario" class="modal">
+        <div class="modal-box">
+            <h3>NUEVO PRODUCTO EN INVENTARIO</h3>
+            <form action="admin_dashboard.html" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="action" value="crear_inventario">
+                <label for="nuevo_inv_nombre">NOMBRE DEL PRODUCTO</label>
+                <input type="text" id="nuevo_inv_nombre" name="nombre" required>
+                <label for="nuevo_inv_stock">STOCK / EXISTENCIAS</label>
+                <input type="number" id="nuevo_inv_stock" name="stock" min="0" required>
+                <label for="nuevo_inv_foto">FOTO DEL PRODUCTO</label>
+                <input type="file" id="nuevo_inv_foto" name="foto" accept="image/*" required>
+                <div class="modal-actions">
+                    <button type="button" class="btn-delete" onclick="cerrarModal('modalCrearInventario')">CANCELAR</button>
+                    <button type="submit" class="btn-update">GUARDAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- MODAL CREAR / EDITAR USUARIO -->
+    <div id="modalUsuario" class="modal">
+        <div class="modal-box">
+            <h3 id="modalUsuarioTitulo">NUEVO ADMINISTRADOR</h3>
+            <form action="admin_dashboard.html" method="POST">
+                <input type="hidden" name="action" id="modal_usuario_action" value="crear_usuario">
+                <label for="input_id_usuario">ID USUARIO</label>
+                <input type="text" id="input_id_usuario" name="id_usuario" required>
+                <label for="input_password">CONTRASEÑA</label>
+                <input type="text" id="input_password" name="contraseña" required>
+                <div class="modal-actions">
+                    <button type="button" class="btn-delete" onclick="cerrarModal('modalUsuario')">CANCELAR</button>
+                    <button type="submit" class="btn-update">GUARDAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- MODAL EDITAR CLIENTE -->
+    <div id="modalCliente" class="modal">
+        <div class="modal-box">
+            <h3>EDITAR CLIENTE</h3>
+            <form action="admin_dashboard.html" method="POST">
+                <input type="hidden" name="action" value="actualizar_cliente">
+                <input type="hidden" id="edit_cliente_id" name="id_usuario">
+                <label for="edit_correo">CORREO ELECTRÓNICO</label>
+                <input type="email" id="edit_correo" name="correo" required>
+                <div class="modal-actions">
+                    <button type="button" class="btn-delete" onclick="cerrarModal('modalCliente')">CANCELAR</button>
+                    <button type="submit" class="btn-update">GUARDAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- MODAL EDITAR VENTA -->
+    <div id="modalVenta" class="modal">
+        <div class="modal-box">
+            <h3>EDITAR VENTA / APARTADO</h3>
+            <form action="admin_dashboard.html" method="POST">
+                <input type="hidden" name="action" value="actualizar_venta">
+                <input type="hidden" id="edit_venta_id" name="id_venta">
+                <label for="edit_producto">NOMBRE DEL PRODUCTO</label>
+                <input type="text" id="edit_producto" name="nombre_producto" required>
+                <label for="edit_cliente_venta">NOMBRE DEL CLIENTE</label>
+                <input type="text" id="edit_cliente_venta" name="nombre_cliente" required>
+                <label for="edit_venta_cantidad">CANTIDAD</label>
+                <input type="number" id="edit_venta_cantidad" name="cantidad" min="1" required>
+                <div class="modal-actions">
+                    <button type="button" class="btn-delete" onclick="cerrarModal('modalVenta')">CANCELAR</button>
+                    <button type="submit" class="btn-update">GUARDAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- MODAL EDITAR INVENTARIO -->
+    <div id="modalInventario" class="modal">
+        <div class="modal-box">
+            <h3>EDITAR INVENTARIO</h3>
+            <form action="admin_dashboard.html" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="action" value="actualizar_inventario">
+                <input type="hidden" id="edit_inv_id" name="id_inventario">
+                <label for="edit_inv_nombre">NOMBRE DEL PRODUCTO</label>
+                <input type="text" id="edit_inv_nombre" name="nombre" required>
+                <label for="edit_inv_stock">STOCK / EXISTENCIAS</label>
+                <input type="number" id="edit_inv_stock" name="stock" min="0" required>
+                <label for="edit_inv_foto">CAMBIAR FOTO (OPCIONAL)</label>
+                <input type="file" id="edit_inv_foto" name="foto" accept="image/*">
+                <div class="modal-actions">
+                    <button type="button" class="btn-delete" onclick="cerrarModal('modalInventario')">CANCELAR</button>
+                    <button type="submit" class="btn-update">GUARDAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function cerrarModal(idModal) {
+            document.getElementById(idModal).style.display = 'none';
+        }
+        function abrirModalCrearInventario() {
+            document.getElementById('nuevo_inv_nombre').value = '';
+            document.getElementById('nuevo_inv_stock').value = '';
+            document.getElementById('nuevo_inv_foto').value = '';
+            document.getElementById('modalCrearInventario').style.display = 'flex';
+        }
+        function abrirModalCrearUsuario() {
+            document.getElementById('modalUsuarioTitulo').innerText = 'NUEVO ADMINISTRADOR';
+            document.getElementById('modal_usuario_action').value = 'crear_usuario';
+            document.getElementById('input_id_usuario').value = '';
+            document.getElementById('input_id_usuario').readOnly = false;
+            document.getElementById('input_password').value = '';
+            document.getElementById('modalUsuario').style.display = 'flex';
+        }
+        function abrirModalUsuario(idUsuario, password) {
+            document.getElementById('modalUsuarioTitulo').innerText = 'EDITAR ADMINISTRADOR';
+            document.getElementById('modal_usuario_action').value = 'actualizar_usuario';
+            document.getElementById('input_id_usuario').value = idUsuario;
+            document.getElementById('input_id_usuario').readOnly = true;
+            document.getElementById('input_password').value = password;
+            document.getElementById('modalUsuario').style.display = 'flex';
+        }
+        function abrirModalCliente(id, correo) {
+            document.getElementById('edit_cliente_id').value = id;
+            document.getElementById('edit_correo').value = correo;
+            document.getElementById('modalCliente').style.display = 'flex';
+        }
+        function abrirModalVenta(id, producto, cliente, cantidad) {
+            document.getElementById('edit_venta_id').value = id;
+            document.getElementById('edit_producto').value = producto;
+            document.getElementById('edit_cliente_venta').value = cliente;
+            document.getElementById('edit_venta_cantidad').value = cantidad;
+            document.getElementById('modalVenta').style.display = 'flex';
+        }
+        function abrirModalInventario(id, nombre, stock) {
+            document.getElementById('edit_inv_id').value = id;
+            document.getElementById('edit_inv_nombre').value = nombre;
+            document.getElementById('edit_inv_stock').value = stock;
+            document.getElementById('modalInventario').style.display = 'flex';
+        }
+        // Renderizar Gráfica de Ventas por Mes con Chart.js
+        const ctx = document.getElementById('graficaVentasMes').getContext('2d');
+        const mesesLabels = ;
+        const ventasData = ;
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: mesesLabels,
+                datasets: [{
+                    label: 'Unidades Vendidas',
+                    data: ventasData,
+                    backgroundColor: 'rgba(255, 59, 0, 0.6)',
+                    borderColor: '#ff3b00',
+                    borderWidth: 2,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#fff',
+                            font: { family: 'Orbitron', size: 12 }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#d1d5db', font: { family: 'Roboto' } },
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#d1d5db', precision: 0, font: { family: 'Roboto' } },
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

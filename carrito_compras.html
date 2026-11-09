@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras - Hot Wheels</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0b0c10;
+            background-image: radial-gradient(circle at center, #1b1e28 0%, #08090c 100%);
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+        .container { max-width: 900px; margin: 0 auto; background: #121317; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #fff; margin-bottom: 0.5rem; }
+        .subtitle { color: #ff4500; font-size: 0.8rem; font-family: 'Orbitron', sans-serif; margin-bottom: 2rem; }
+        .cart-table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+        .cart-table th { font-family: 'Orbitron', sans-serif; font-size: 0.8rem; color: #ffcc00; border-bottom: 2px solid #e60000; padding: 10px; text-align: left; }
+        .cart-table td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; vertical-align: middle; }
+        .product-img-thumb { width: 50px; height: 50px; object-fit: contain; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); }
+        .total-box { display: flex; justify-content: space-between; align-items: center; background: #1b1e28; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; }
+        .total-box h2 { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; color: #00ffcc; }
+        .payment-method { margin-bottom: 2rem; }
+        .payment-method label { display: block; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; color: #ff4500; margin-bottom: 0.5rem; }
+        .payment-method select { width: 100%; padding: 0.8rem; background: #0b0c10; border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 8px; font-family: 'Poppins', sans-serif; }
+        .btn-actions { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; align-items: center; }
+        .btn-back { background: #333; color: #fff; padding: 0.7rem 1.5rem; border-radius: 8px; text-decoration: none; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 800; display: inline-block; text-align: center; }
+        .btn-checkout { background: linear-gradient(135deg, #ff4500, #e60000); color: #fff; border: none; padding: 0.7rem 2rem; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 800; cursor: pointer; box-shadow: 0 0 15px rgba(255, 69, 0, 0.4); }
+        .btn-checkout:hover { transform: scale(1.03); }
+        .btn-print { background: #008060; color: #fff; border: none; padding: 0.7rem 1.5rem; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 800; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-print:hover { background: #00a876; }
+        .btn-email { background: #0056b3; color: #fff; border: none; padding: 0.7rem 1.5rem; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 800; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-email:hover { background: #007bff; }
+        .alert-success { background: rgba(0, 255, 128, 0.15); border: 1px solid #00ff80; color: #00ff80; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; font-family: 'Orbitron', sans-serif; text-align: center; font-size: 0.85rem; }
+        .alert-error { background: rgba(255,0,0,0.2); border: 1px solid #ff0000; color: #ff8080; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            .container { border: none; box-shadow: none; width: 100%; max-width: 100%; background: #fff; color: #000; }
+            .btn-actions, .payment-method, .subtitle, h1, .alert-success { display: none !important; }
+            .cart-table th { color: #000; border-bottom: 2px solid #000; }
+            .cart-table td { border-bottom: 1px solid #ccc; color: #000; }
+            .total-box { background: #eee; color: #000; border: 1px solid #000; }
+            .total-box h2 { color: #000; }
+            .ticket-header { display: block !important; text-align: center; margin-bottom: 2rem; }
+            .product-img-thumb { border: 1px solid #ccc; }
+        }
+        .ticket-header { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="ticket-header">
+            <h2>HOT WHEELS COLLECTOR CLUB</h2>
+            <p>COMPROBANTE DE COMPRA / TICKET OFICIAL</p>
+            <p>Cliente:  | Fecha: </p>
+            <hr style="border: 0; border-top: 1px dashed #000; margin: 1rem 0;">
+        </div>
+        <h1>CARRITO DE COMPRAS</h1>
+        <p class="subtitle"></p>
+            <div class="alert-error"></div>
+            <div class="alert-success"></div>
+                <div class="alert-success">¡Se ha procesado tu compra y actualizado el inventario correctamente!</div>
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>IMAGEN</th>
+                        <th>PRODUCTO</th>
+                        <th>PRECIO UNITARIO</th>
+                        <th>CANTIDAD</th>
+                        <th>SUBTOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td><img src="img/" class="product-img-thumb" alt="Foto"></td>
+                            <td><strong></strong></td>
+                            <td>$</td>
+                            <td></td>
+                            <td>$</td>
+                        </tr>
+                </tbody>
+            </table>
+            <div class="total-box">
+                <span style="font-family: 'Orbitron'; font-size: 1.1rem;">TOTAL PAGADO:</span>
+                <h2>$</h2>
+            </div>
+            <div class="btn-actions">
+                <a href="cliente_tienda.html" class="btn-back">← REGRESAR AL CATÁLOGO</a>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button onclick="window.print()" class="btn-print">🖨️ IMPRIMIR</button>
+                    <form action="carrito_compras.html" method="POST" style="margin: 0;">
+                        <input type="hidden" name="enviar_correo_ticket" value="1">
+                        <button type="submit" class="btn-email">✉️ MANDAR A CORREO</button>
+                    </form>
+                </div>
+            </div>
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>IMAGEN</th>
+                        <th>PRODUCTO</th>
+                        <th>PRECIO UNITARIO</th>
+                        <th>CANTIDAD</th>
+                        <th>SUBTOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td><img src="img/" class="product-img-thumb" alt="Foto"></td>
+                            <td><strong></strong></td>
+                            <td>$</td>
+                            <td></td>
+                            <td>$</td>
+                        </tr>
+                </tbody>
+            </table>
+            <div class="total-box">
+                <span style="font-family: 'Orbitron'; font-size: 1.1rem;">TOTAL A PAGAR:</span>
+                <h2>$</h2>
+            </div>
+            <form action="carrito_compras.html" method="POST">
+                <div class="payment-method">
+                    <label for="metodo_pago">SELECCIONE MÉTODO DE PAGO:</label>
+                    <select name="metodo_pago" id="metodo_pago" required>
+                        <option value="tarjeta">Tarjeta de Crédito / Débito</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="efectivo_tienda">Pago en Efectivo (Al recoger en Garage)</option>
+                    </select>
+                </div>
+                <div class="btn-actions">
+                    <a href="cliente_tienda.html" class="btn-back">← SEGUIR COMPRANDO</a>
+                    <button type="submit" name="finalizar_compra" class="btn-checkout">CONFIRMAR Y PAGAR</button>
+                </div>
+            </form>
+            <p style="color: #888; text-align: center; padding: 2rem 0;">Tu carrito está vacío.</p>
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="cliente_tienda.html" class="btn-back">REGRESAR AL CATÁLOGO</a>
+            </div>
+    </div>
+</body>
+</html>

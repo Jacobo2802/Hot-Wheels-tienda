@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Wheels - Registro de Clientes</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <main class="login-container">
+        <!-- Encabezado / Branding -->
+        <div class="login-header">
+            <div class="badge-flame">
+                <span>HW</span>
+            </div>
+            <h1>NUEVA CUENTA</h1>
+            <p class="subtitle">UNETE AL COLLECTOR CLUB</p>
+        </div>
+        <!-- Mensajes de Notificación -->
+            <div style="background: rgba(230, 0, 0, 0.25); border: 1px solid var(--orange-hw); color: #ff6b6b; padding: 0.6rem; border-radius: 8px; font-size: 0.8rem; text-align: center; margin-bottom: 1rem;">
+            </div>
+            <div style="background: rgba(0, 200, 81, 0.25); border: 1px solid #00c851; color: #51f087; padding: 0.6rem; border-radius: 8px; font-size: 0.8rem; text-align: center; margin-bottom: 1rem;">
+                ¡Cuenta creada con éxito! Ya puedes <a href="index.html" style="color: #fff; underline;">Iniciar Sesión</a>.
+            </div>
+        <!-- Formulario de Registro -->
+        <form action="registro_process.html" method="POST" class="login-form">
+            <div class="input-group">
+                <label for="correo">CORREO ELECTRÓNICO</label>
+                <div class="input-wrapper">
+                    <input type="email" id="correo" name="correo" placeholder="ejemplo@hotwheels.com" required autocomplete="off">
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="password">CONTRASEÑA</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+            </div>
+            <button type="submit" class="btn-login" style="margin-top: 1rem;">
+                <span>CREAR CUENTA</span>
+            </button>
+            <div class="register-container">
+                <p>¿Ya tienes una cuenta? <a href="index.html" class="register-link">Inicia sesión aquí</a></p>
+            </div>
+        </form>
+        <footer class="login-footer">
+            <p>Hot Wheels Collector's Garage &copy; </p>
+        </footer>
+    </main>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Wheels - Portal Clientes</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <main class="login-container">
+        <!-- Encabezado / Branding -->
+        <div class="login-header">
+            <div class="badge-flame">
+                <span>HW</span>
+            </div>
+            <h1>COLLECTOR CLUB</h1>
+            <p class="subtitle">Hot Wheels</p>
+        </div>
+        <!-- Mensajes de Error en caso de falla -->
+            <div style="background: rgba(230, 0, 0, 0.25); border: 1px solid var(--orange-hw); color: #ff6b6b; padding: 0.6rem; border-radius: 8px; font-size: 0.8rem; text-align: center; margin-bottom: 1rem;">
+            </div>
+        <!-- Formulario de Clientes -->
+        <form action="login.html" method="POST" class="login-form">
+            <div class="input-group">
+                <label for="username">USUARIO O CORREO</label>
+                <div class="input-wrapper">
+                    <input type="text" id="username" name="username" placeholder="Ingresa tu usuario o correo" required autocomplete="off">
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="password">CONTRASEÑA</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+            </div>
+            <div class="form-actions">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember">
+                    <span class="custom-check"></span>
+                    Recordar sesión
+                </label>
+                <a href="recuperar_password.html" class="forgot-link">¿Olvidaste tu contraseña?</a>
+            </div>
+            <button type="submit" class="btn-login">
+                <span>INICIAR SESIÓN</span>
+            </button>
+            <div class="register-container">
+                <p>¿No tienes una cuenta? <a href="registro.html" class="register-link">Regístrate aquí</a></p>
+            </div>
+        </form>
+        <footer class="login-footer">
+            <p>Hot Wheels Collector's Garage &copy; </p>
+        </footer>
+    </main>
+</body>
+</html>

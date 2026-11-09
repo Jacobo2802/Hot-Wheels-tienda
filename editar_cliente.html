@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Hot Wheels - Actualizar Cliente</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <main class="login-container">
+        <div class="login-header">
+            <h1>UPDATE CLIENTE</h1>
+            <p class="subtitle">MODIFICAR REGISTRO #</p>
+        </div>
+        <form method="POST" class="login-form">
+            <div class="input-group">
+                <label for="correo">CORREO ELECTRÓNICO</label>
+                <div class="input-wrapper">
+                    <input type="email" id="correo" name="correo" value="" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="password">NUEVA CONTRASEÑA (OPCIONAL)</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password" placeholder="Dejar en blanco para mantener la actual">
+                </div>
+            </div>
+            <button type="submit" class="btn-login" style="margin-top: 1rem;">
+                <span>GUARDAR CAMBIOS</span>
+            </button>
+            <a href="admin_dashboard.html" style="text-align: center; color: var(--text-muted); font-size: 0.8rem; text-decoration: none; margin-top: 1rem;">Cancelar</a>
+        </form>
+    </main>
+</body>
+</html>
